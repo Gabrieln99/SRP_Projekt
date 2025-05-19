@@ -1,35 +1,36 @@
-from pyspark.sql import DataFrame
-from pyspark.sql.functions import monotonically_increasing_id, col, row_number
-from pyspark.sql.window import Window
+# dim_time.py
+from pyspark.sql.functions import col, monotonically_increasing_id
 
-def transform_time_dim(flight_df: DataFrame) -> DataFrame:
+def transform_time_dim(flight_df):
     """
-    Transform time data from flights into the time dimension table
+    Transform time information from flight data into a time dimension table.
     
     Args:
-        flight_df: DataFrame containing flight data from the source with time columns
+        flight_df: DataFrame containing flight data with time columns
         
     Returns:
-        DataFrame: Transformed time dimension table
+        DataFrame with time dimension structure ready for loading
     """
     print("Transforming time dimension...")
     
-    # Select unique time combinations
-    dim_time = flight_df.select(
+    # Select relevant time columns from flight data
+    time_dim = flight_df.select(
         col("dep_time"),
         col("arr_time"),
         col("sched_dep_time"),
         col("sched_arr_time"),
         col("hour"),
         col("minute")
-    ).distinct()
+    )
     
-    # Add surrogate key using window function to ensure deterministic ordering
-    window_spec = Window.orderBy("hour", "minute", "sched_dep_time")
-    dim_time = dim_time.withColumn("time_tk", row_number().over(window_spec))
+    # Drop duplicates to get unique time combinations
+    time_dim = time_dim.dropDuplicates(["dep_time", "arr_time", "sched_dep_time", "sched_arr_time", "hour", "minute"])
     
-    # Select final columns in the right order
-    dim_time = dim_time.select(
+    # Generate surrogate key
+    time_dim = time_dim.withColumn("time_tk", monotonically_increasing_id() + 1)
+    
+    # Reorder columns to match the dimension table structure
+    time_dim = time_dim.select(
         "time_tk",
         "dep_time",
         "arr_time",
@@ -39,5 +40,5 @@ def transform_time_dim(flight_df: DataFrame) -> DataFrame:
         "minute"
     )
     
-    print(f"Created time dimension with {dim_time.count()} records")
-    return dim_time
+    print(f"Created time dimension with {time_dim.count()} records")
+    return time_dim

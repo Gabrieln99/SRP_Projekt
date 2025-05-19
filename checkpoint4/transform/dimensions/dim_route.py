@@ -1,21 +1,20 @@
-from pyspark.sql import DataFrame
-from pyspark.sql.functions import monotonically_increasing_id, col
+# dim_route.py
+from pyspark.sql.functions import col, monotonically_increasing_id
 
-def transform_route_dim(route_df: DataFrame) -> DataFrame:
+def transform_route_dim(route_df):
     """
-    Transform route data into the route dimension table
+    Transform route data into the star schema dimension format.
     
     Args:
-        route_df: DataFrame containing route data from the source
+        route_df: DataFrame containing route data from the transactional model
         
     Returns:
-        DataFrame: Transformed route dimension table
+        DataFrame with route dimension structure ready for loading
     """
     print("Transforming route dimension...")
     
-    # Select and rename columns as needed
-    dim_route = route_df.select(
-        col("id").alias("source_id"),  # Keep original ID for mapping
+    # Select relevant columns
+    route_dim = route_df.select(
         col("origin"),
         col("destination"),
         col("departure_city"),
@@ -27,11 +26,14 @@ def transform_route_dim(route_df: DataFrame) -> DataFrame:
         col("distance")
     )
     
-    # Add surrogate key
-    dim_route = dim_route.withColumn("route_tk", monotonically_increasing_id() + 1)
+    # Drop duplicates based on origin and destination
+    route_dim = route_dim.dropDuplicates(["origin", "destination"])
     
-    # Select final columns in the right order
-    dim_route = dim_route.select(
+    # Generate surrogate key
+    route_dim = route_dim.withColumn("route_tk", monotonically_increasing_id() + 1)
+    
+    # Reorder columns to match the dimension table structure
+    route_dim = route_dim.select(
         "route_tk",
         "origin",
         "destination",
@@ -41,9 +43,8 @@ def transform_route_dim(route_df: DataFrame) -> DataFrame:
         "destination_city",
         "destination_country",
         "destination_airport_name",
-        "distance",
-        "source_id"  # Keep for joining in fact table transformation
+        "distance"
     )
     
-    print(f"Created route dimension with {dim_route.count()} records")
-    return dim_route
+    print(f"Created route dimension with {route_dim.count()} records")
+    return route_dim

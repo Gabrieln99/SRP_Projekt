@@ -1,13 +1,24 @@
 import pandas as pd
+import os
+from pathlib import Path
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.exc import IntegrityError
 
-CSV_FILE_PATH = "D:/fax_/treca_godina/skladistenje_rudarenje/checkpoint2/flights_najbolji_PROCESSED.csv"  ## tu mora ic i80 posto jer u star shemu ide 20
+# Get the directory where the script is located
+current_dir = Path(__file__).parent.absolute()
 
+# Define the CSV path relative to the script location
+CSV_FILE_PATH = os.path.join(current_dir, "flights_najbolji_PROCESSED.csv")
+
+# If the CSV is in a different directory relative to the script, adjust accordingly
+# For example, if it's in a checkpoint2 folder:
+# CSV_FILE_PATH = os.path.join(current_dir, "checkpoint2", "flights_najbolji_PROCESSED.csv")
+
+print(f"Looking for CSV at: {CSV_FILE_PATH}")
 df = pd.read_csv(CSV_FILE_PATH, delimiter=',')
-print(f"CSV size: {df.shape}") 
-print(df.head()) 
+print(f"CSV size: {df.shape}")
+print(df.head())
 
 Base = declarative_base()
 

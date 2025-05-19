@@ -1,33 +1,34 @@
-from pyspark.sql import DataFrame
-from pyspark.sql.functions import monotonically_increasing_id, col, row_number
-from pyspark.sql.window import Window
+# dim_date.py
+from pyspark.sql.functions import col, monotonically_increasing_id
 
-def transform_date_dim(flight_df: DataFrame) -> DataFrame:
+def transform_date_dim(flight_df):
     """
-    Transform date data from flights into the date dimension table
+    Transform date information from flight data into a date dimension table.
     
     Args:
-        flight_df: DataFrame containing flight data from the source with date columns
+        flight_df: DataFrame containing flight data with date columns
         
     Returns:
-        DataFrame: Transformed date dimension table
+        DataFrame with date dimension structure ready for loading
     """
     print("Transforming date dimension...")
     
-    # Select unique date combinations
-    dim_date = flight_df.select(
+    # Select relevant date columns from flight data
+    date_dim = flight_df.select(
         col("year"),
         col("month"),
         col("day"),
         col("day_of_week")
-    ).distinct()
+    )
     
-    # Add surrogate key using window function to ensure deterministic ordering
-    window_spec = Window.orderBy("year", "month", "day")
-    dim_date = dim_date.withColumn("date_tk", row_number().over(window_spec))
+    # Drop duplicates to get unique date combinations
+    date_dim = date_dim.dropDuplicates(["year", "month", "day"])
     
-    # Select final columns in the right order
-    dim_date = dim_date.select(
+    # Generate surrogate key
+    date_dim = date_dim.withColumn("date_tk", monotonically_increasing_id() + 1)
+    
+    # Reorder columns to match the dimension table structure
+    date_dim = date_dim.select(
         "date_tk",
         "year",
         "month",
@@ -35,5 +36,5 @@ def transform_date_dim(flight_df: DataFrame) -> DataFrame:
         "day_of_week"
     )
     
-    print(f"Created date dimension with {dim_date.count()} records")
-    return dim_date
+    print(f"Created date dimension with {date_dim.count()} records")
+    return date_dim

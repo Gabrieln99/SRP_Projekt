@@ -1,5 +1,6 @@
+# fact_flight.py
+from pyspark.sql.functions import col, monotonically_increasing_id
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import col, monotonically_increasing_id, trim
 
 def transform_fact_flight(
     flight_df: DataFrame,
@@ -11,107 +12,119 @@ def transform_fact_flight(
     dim_date_df: DataFrame,
     dim_time_df: DataFrame
 ) -> DataFrame:
-    """Transform flight data into fact table"""
-    print("Creating fact flight table...")
+    """
+    Transform flight data into the fact table by linking to all dimensions.
     
-    # Start building fact table with flight data
-    fact_flight = flight_df.select(
-        col("id").alias("flight_source_id"),
-        col("carrier"),
-        col("tailnum"),
-        col("origin"),
-        col("destination"),
-        col("dep_delay_time").alias("dep_delay_tk"),
-        col("arr_delay_time").alias("arr_delay_tk"),
-        col("year"),
-        col("month"),
-        col("day"),
-        col("day_of_week"),
-        col("dep_time"),
-        col("arr_time"),
-        col("sched_dep_time"),
-        col("sched_arr_time"),
-        col("hour"),
-        col("minute"),
-        col("air_time"),
-        col("flight_num"),
-        col("distance").alias("flight_distance")  # Rename distance to avoid ambiguity
-    )
+    Args:
+        flight_df: DataFrame containing flight data
+        dim_airline_df: Airline dimension DataFrame
+        dim_aircraft_df: Aircraft dimension DataFrame
+        dim_route_df: Route dimension DataFrame
+        dim_dep_delay_df: Departure delay dimension DataFrame
+        dim_arr_delay_df: Arrival delay dimension DataFrame
+        dim_date_df: Date dimension DataFrame
+        dim_time_df: Time dimension DataFrame
+        
+    Returns:
+        DataFrame with fact flight structure ready for loading
+    """
+    print("Transforming flight fact table...")
     
-    # Join with dimensions to get surrogate keys
-    
-    # Airline dimension
-    fact_flight = fact_flight.join(
-        dim_airline_df,
-        trim(fact_flight.carrier) == trim(dim_airline_df.carrier),
+    # ==== Get airline dimension keys ====
+    # First, join flight_df with aircraft to get carrier information
+    flight_with_airline = flight_df.join(
+        dim_airline_df.select("airline_tk", "carrier"),
+        flight_df["carrier"] == dim_airline_df["carrier"],
         "left"
-    )
+    ).withColumnRenamed("airline_tk", "airline_id")
     
-    # Aircraft dimension
-    fact_flight = fact_flight.join(
-        dim_aircraft_df,
-        trim(fact_flight.tailnum) == trim(dim_aircraft_df.tailnum),
+    # ==== Get aircraft dimension keys ====
+    flight_with_aircraft = flight_with_airline.join(
+        dim_aircraft_df.select("aircraft_tk", "tailnum"),
+        flight_with_airline["tailnum"] == dim_aircraft_df["tailnum"],
         "left"
-    )
+    ).withColumnRenamed("aircraft_tk", "aircraft_id")
     
-    # Route dimension - rename distance column to avoid ambiguity
-    modified_route_df = dim_route_df.withColumnRenamed("distance", "route_distance")
-    fact_flight = fact_flight.join(
-        modified_route_df,
-        (trim(fact_flight.origin) == trim(modified_route_df.origin)) &
-        (trim(fact_flight.destination) == trim(modified_route_df.destination)),
+    # ==== Get route dimension keys ====
+    flight_with_route = flight_with_aircraft.join(
+        dim_route_df.select("route_tk", "origin", "destination"),
+        (flight_with_aircraft["origin"] == dim_route_df["origin"]) & 
+        (flight_with_aircraft["destination"] == dim_route_df["destination"]),
         "left"
-    )
+    ).withColumnRenamed("route_tk", "route_id")
     
-    # Departure delay dimension
-    fact_flight = fact_flight.join(
-        dim_dep_delay_df,
-        fact_flight.dep_delay_tk == dim_dep_delay_df.dep_delay_tk,
+    # ==== Get departure delay dimension keys ====
+    flight_with_dep_delay = flight_with_route.join(
+        dim_dep_delay_df.select(
+            "dep_delay_tk", 
+            col("reason").alias("dep_reason"), 
+            col("delay_time").alias("dep_delay_time")
+        ),
+        (flight_with_route["reason_dep_delay"] == col("dep_reason")) & 
+        (flight_with_route["dep_delay_time"] == col("dep_delay_time")),
         "left"
-    )
+    ).withColumnRenamed("dep_delay_tk", "dep_delay_id")
     
-    # Arrival delay dimension
-    fact_flight = fact_flight.join(
-        dim_arr_delay_df,
-        fact_flight.arr_delay_tk == dim_arr_delay_df.arr_delay_tk,
+    # ==== Get arrival delay dimension keys ====
+    flight_with_arr_delay = flight_with_dep_delay.join(
+        dim_arr_delay_df.select(
+            "arr_delay_tk", 
+            col("reason").alias("arr_reason"), 
+            col("delay_time").alias("arr_delay_time")
+        ),
+        (flight_with_dep_delay["reason_arr_delay"] == col("arr_reason")) & 
+        (flight_with_dep_delay["arr_delay_time"] == col("arr_delay_time")),
         "left"
-    )
+    ).withColumnRenamed("arr_delay_tk", "arr_delay_id")
     
-    # Date dimension
-    fact_flight = fact_flight.join(
-        dim_date_df,
-        (fact_flight.year == dim_date_df.year) &
-        (fact_flight.month == dim_date_df.month) &
-        (fact_flight.day == dim_date_df.day) &
-        (fact_flight.day_of_week == dim_date_df.day_of_week),
+    # ==== Get date dimension keys ====
+    flight_with_date = flight_with_arr_delay.join(
+        dim_date_df.select("date_tk", "year", "month", "day"),
+        (flight_with_arr_delay["year"] == dim_date_df["year"]) & 
+        (flight_with_arr_delay["month"] == dim_date_df["month"]) & 
+        (flight_with_arr_delay["day"] == dim_date_df["day"]),
         "left"
-    )
+    ).withColumnRenamed("date_tk", "date_id")
     
-    # Time dimension
-    fact_flight = fact_flight.join(
-        dim_time_df,
-        (fact_flight.dep_time == dim_time_df.dep_time) &
-        (fact_flight.sched_dep_time == dim_time_df.sched_dep_time),
+    # ==== Get time dimension keys ====
+    flight_with_time = flight_with_date.join(
+        dim_time_df.select(
+            "time_tk", "dep_time", "arr_time", 
+            "sched_dep_time", "sched_arr_time", 
+            "hour", "minute"
+        ),
+        (flight_with_date["dep_time"] == dim_time_df["dep_time"]) & 
+        (flight_with_date["arr_time"] == dim_time_df["arr_time"]) & 
+        (flight_with_date["sched_dep_time"] == dim_time_df["sched_dep_time"]) & 
+        (flight_with_date["sched_arr_time"] == dim_time_df["sched_arr_time"]) & 
+        (flight_with_date["hour"] == dim_time_df["hour"]) & 
+        (flight_with_date["minute"] == dim_time_df["minute"]),
         "left"
-    )
+    ).withColumnRenamed("time_tk", "time_id")
     
-    # Create surrogate key for fact table
-    fact_flight = fact_flight.withColumn("flight_sk", monotonically_increasing_id() + 1)
-    
-    # Select final columns with consistent naming
-    final_fact_flight = fact_flight.select(
-        "flight_sk",
-        col("airline_sk"),
-        col("aircraft_sk"),
-        col("route_sk"),
-        col("dep_delay_sk"),
-        col("arr_delay_sk"),
-        col("date_sk"),
-        col("time_sk"),
+    # Build the final fact table with selected columns
+    fact_flight = flight_with_time.select(
+        monotonically_increasing_id().alias("flight_tk"),
+        "airline_id",
+        "aircraft_id",
+        "route_id",
+        "dep_delay_id",
+        "arr_delay_id",
+        "date_id",
+        "time_id",
         "air_time",
-        "flight_distance",  # Use renamed column
         "flight_num"
     )
     
-    print(f"Created fact flight table with {final_fact_flight.count()} records")
-    return final_fact_flight
+    # Count valid fact records (those with all dimension keys)
+    valid_records = fact_flight.filter(
+        col("airline_id").isNotNull() &
+        col("route_id").isNotNull() &
+        col("date_id").isNotNull() &
+        col("time_id").isNotNull()
+    ).count()
+    
+    print(f"Created flight fact table with {fact_flight.count()} total records")
+    print(f"  - {valid_records} valid records with all required dimension keys")
+    
+    return fact_flight

@@ -1,35 +1,36 @@
-from pyspark.sql import DataFrame
-from pyspark.sql.functions import monotonically_increasing_id, col, lit
+# dim_airline.py
+from pyspark.sql.functions import col, monotonically_increasing_id
 
-def transform_airline_dim(airline_df: DataFrame) -> DataFrame:
+def transform_airline_dim(airline_df):
     """
-    Transform airline data into the airline dimension table
+    Transform airline data into the star schema dimension format.
     
     Args:
-        airline_df: DataFrame containing airline data from the source
+        airline_df: DataFrame containing airline data from the transactional model
         
     Returns:
-        DataFrame: Transformed airline dimension table
+        DataFrame with airline dimension structure ready for loading
     """
     print("Transforming airline dimension...")
     
-    # Select and rename columns as needed
-    dim_airline = airline_df.select(
-        col("id").alias("source_id"),  # Keep original ID for mapping
+    # Select relevant columns
+    airline_dim = airline_df.select(
         col("carrier"),
         col("airline_name")
     )
     
-    # Add surrogate key
-    dim_airline = dim_airline.withColumn("airline_tk", monotonically_increasing_id() + 1)
+    # Drop duplicates to ensure dimension integrity
+    airline_dim = airline_dim.dropDuplicates(["carrier"])
     
-    # Select final columns in the right order
-    dim_airline = dim_airline.select(
+    # Generate surrogate key
+    airline_dim = airline_dim.withColumn("airline_tk", monotonically_increasing_id() + 1)
+    
+    # Reorder columns to match the dimension table structure
+    airline_dim = airline_dim.select(
         "airline_tk",
         "carrier",
-        "airline_name",
-        "source_id"  # Keep for joining in fact table transformation
+        "airline_name"
     )
     
-    print(f"Created airline dimension with {dim_airline.count()} records")
-    return dim_airline
+    print(f"Created airline dimension with {airline_dim.count()} records")
+    return airline_dim

@@ -5,7 +5,7 @@ print("Hello World")
 import pandas as pd
 
 # Učitavanje podataka iz CSV datoteke
-PATH = r"D:\fax_\treca_godina\skladistenje_rudarenje\checkpoint1\flights.csv"
+PATH = r"D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint1\flights.csv"
 
 
 # Učitavanje prvih 2000 redova

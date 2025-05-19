@@ -1,24 +1,47 @@
-from pyspark.sql import SparkSession
 import os
-import sys
+import logging
+from pathlib import Path
+from pyspark.sql import SparkSession
 
 def get_spark_session(app_name="ETL_App"):
-    # Set up Hadoop environment for Windows
-    os.environ['HADOOP_HOME'] = os.path.join(os.path.dirname(__file__), 'hadoop')
-    os.environ['PATH'] = os.environ['HADOOP_HOME'] + '\\bin' + os.pathsep + os.environ['PATH']
-
-    # Specify the path to the MySQL connector JAR using raw string
-    connector_path = r"D:\fax_\treca_godina\skladistenje_rudarenje\checkpoint4\connectors\mysql-connector-j-9.2.0.jar"
+    """
+    Create and return a Spark session with MySQL connector configured.
+    """
+    # Get the directory where the script is located
+    current_dir = Path(__file__).parent.absolute()
     
-    # Check if the connector exists
+    # Define connector path relative to the script location
+    connector_dir = os.path.join(current_dir, "connectors")
+    connector_path = os.path.join(connector_dir, "mysql-connector-j-9.2.0.jar")
+    
+    # Create connectors directory if it doesn't exist
+    if not os.path.exists(connector_dir):
+        os.makedirs(connector_dir)
+        logging.warning(f"Created connectors directory at: {connector_dir}")
+    
+    # Check if connector exists
     if not os.path.exists(connector_path):
-        raise FileNotFoundError(f"MySQL connector JAR not found at: {connector_path}")
+        # Try alternate filenames
+        alternate_names = [
+            "mysql-connector-java-8.0.28.jar",
+            "mysql-connector-java-8.0.30.jar",
+            "mysql-connector-j-8.3.0.jar"
+        ]
+        
+        for name in alternate_names:
+            alt_path = os.path.join(connector_dir, name)
+            if os.path.exists(alt_path):
+                connector_path = alt_path
+                break
+        else:  # No connector found
+            error_msg = f"MySQL connector JAR not found at: {connector_path}"
+            logging.error(error_msg)
+            raise FileNotFoundError(error_msg)
     
-    # Create and return the SparkSession
+    # Build the Spark session with the connector properly configured
     return SparkSession.builder \
         .appName(app_name) \
         .config("spark.jars", connector_path) \
-        .config("spark.sql.sources.partitionColumnTypeInference.enabled", "false") \
-        .config("spark.sql.adaptive.enabled", "true") \
         .config("spark.driver.extraClassPath", connector_path) \
+        .config("spark.executor.extraClassPath", connector_path) \
         .getOrCreate()

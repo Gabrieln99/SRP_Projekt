@@ -1,3 +1,4 @@
+# pipeline.py
 from transform.dimensions.dim_airline import transform_airline_dim
 from transform.dimensions.dim_aircraft import transform_aircraft_dim
 from transform.dimensions.dim_route import transform_route_dim
@@ -7,8 +8,16 @@ from transform.dimensions.dim_date import transform_date_dim
 from transform.dimensions.dim_time import transform_time_dim
 from transform.facts.fact_flight import transform_fact_flight
 
-
 def run_transformations(raw_data):
+    """
+    Run all transformations to convert raw data into dimensional model.
+    
+    Args:
+        raw_data: Dictionary containing raw data DataFrames
+        
+    Returns:
+        Dictionary of transformed dimension and fact tables
+    """
     # 1️⃣ Airline dimension
     dim_airline_df = transform_airline_dim(raw_data["airline"])
     print("1️⃣ Airline dimension complete")
