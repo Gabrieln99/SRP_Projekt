@@ -1085,3 +1085,646 @@ Traceback (most recent call last):
     raise converted from None
 pyspark.errors.exceptions.captured.AnalysisException: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column or function parameter with name `carrier` cannot be resolved. Did you mean one of the following? [`id`, `year`, `month`, `day`, `day_of_week`, `dep_time`, `arr_time`, `sched_dep_time`, `sched_arr_time`, `hour`, `minute`, `air_time`, `flight_num`, `dep_delay_fk`, `arr_delay_fk`, `route_fk`, `aircraft_fk`, `source_system`].
 2025-05-19 22:50:15,375 [INFO] Closing down clientserver connection
+2025-05-19 22:53:52,157 [INFO] ======= STARTING EXTRACT PHASE =======
+2025-05-19 22:53:52,157 [INFO] Extracting data from MySQL database (80% of data)
+2025-05-19 22:53:55,710 [INFO] Extracting data from CSV file (20% of data)
+2025-05-19 22:53:58,084 [INFO] ======= STARTING TRANSFORM PHASE =======
+2025-05-19 22:53:58,084 [INFO] Transforming MySQL data (80%)
+2025-05-19 22:54:02,338 [ERROR] ETL process failed: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column or function parameter with name `id` cannot be resolved. Did you mean one of the following? [`tailnum`, `aircraft_tk`].;
+'Project ['id, tailnum#15, 'airline_fk]
++- Project [aircraft_tk#360L, tailnum#15]
+   +- Project [tailnum#15, (monotonically_increasing_id() + cast(1 as bigint)) AS aircraft_tk#360L]
+      +- Filter atleastnnonnulls(1, tailnum#15)
+         +- Deduplicate [tailnum#15]
+            +- Project [tailnum#15]
+               +- Project [id#14, tailnum#15, airline_fk#16, MYSQL AS source_system#261]
+                  +- Relation [id#14,tailnum#15,airline_fk#16] JDBCRelation(aircraft) [numPartitions=1]
+Traceback (most recent call last):
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\main.py", line 62, in main
+    transformed_mysql = run_transformations(mysql_data)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\transform\pipeline.py", line 50, in run_transformations
+    fact_flight_df = transform_fact_flight(
+                     ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\transform\facts\fact_flight.py", line 36, in transform_fact_flight
+    dim_aircraft_df.select("id", "tailnum", "airline_fk"),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\pyspark\sql\dataframe.py", line 3229, in select
+    jdf = self._jdf.select(self._jcols(*cols))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\py4j\java_gateway.py", line 1322, in __call__
+    return_value = get_return_value(
+                   ^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\pyspark\errors\exceptions\captured.py", line 185, in deco
+    raise converted from None
+pyspark.errors.exceptions.captured.AnalysisException: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column or function parameter with name `id` cannot be resolved. Did you mean one of the following? [`tailnum`, `aircraft_tk`].;
+'Project ['id, tailnum#15, 'airline_fk]
++- Project [aircraft_tk#360L, tailnum#15]
+   +- Project [tailnum#15, (monotonically_increasing_id() + cast(1 as bigint)) AS aircraft_tk#360L]
+      +- Filter atleastnnonnulls(1, tailnum#15)
+         +- Deduplicate [tailnum#15]
+            +- Project [tailnum#15]
+               +- Project [id#14, tailnum#15, airline_fk#16, MYSQL AS source_system#261]
+                  +- Relation [id#14,tailnum#15,airline_fk#16] JDBCRelation(aircraft) [numPartitions=1]
+
+2025-05-19 22:54:02,746 [INFO] Closing down clientserver connection
+2025-05-19 22:56:00,926 [INFO] ======= STARTING EXTRACT PHASE =======
+2025-05-19 22:56:00,928 [INFO] Extracting data from MySQL database (80% of data)
+2025-05-19 22:56:04,615 [INFO] Extracting data from CSV file (20% of data)
+2025-05-19 22:56:06,990 [INFO] ======= STARTING TRANSFORM PHASE =======
+2025-05-19 22:56:06,990 [INFO] Transforming MySQL data (80%)
+2025-05-19 22:56:11,079 [ERROR] ETL process failed: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column or function parameter with name `airline_id` cannot be resolved. Did you mean one of the following? [`tailnum`, `aircraft_tk`].;
+'Project [aircraft_tk#360L, tailnum#15, 'airline_id]
++- Project [aircraft_tk#360L, tailnum#15]
+   +- Project [tailnum#15, (monotonically_increasing_id() + cast(1 as bigint)) AS aircraft_tk#360L]
+      +- Filter atleastnnonnulls(1, tailnum#15)
+         +- Deduplicate [tailnum#15]
+            +- Project [tailnum#15]
+               +- Project [id#14, tailnum#15, airline_fk#16, MYSQL AS source_system#261]
+                  +- Relation [id#14,tailnum#15,airline_fk#16] JDBCRelation(aircraft) [numPartitions=1]
+Traceback (most recent call last):
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\main.py", line 62, in main
+    transformed_mysql = run_transformations(mysql_data)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\transform\pipeline.py", line 50, in run_transformations
+    fact_flight_df = transform_fact_flight(
+                     ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\transform\facts\fact_flight.py", line 42, in transform_fact_flight
+    dim_aircraft_df.select("aircraft_tk", "tailnum", "airline_id"),  # Changed from id to aircraft_tk and added airline_id
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\pyspark\sql\dataframe.py", line 3229, in select
+    jdf = self._jdf.select(self._jcols(*cols))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\py4j\java_gateway.py", line 1322, in __call__
+    return_value = get_return_value(
+                   ^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\pyspark\errors\exceptions\captured.py", line 185, in deco
+    raise converted from None
+pyspark.errors.exceptions.captured.AnalysisException: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column or function parameter with name `airline_id` cannot be resolved. Did you mean one of the following? [`tailnum`, `aircraft_tk`].;
+'Project [aircraft_tk#360L, tailnum#15, 'airline_id]
++- Project [aircraft_tk#360L, tailnum#15]
+   +- Project [tailnum#15, (monotonically_increasing_id() + cast(1 as bigint)) AS aircraft_tk#360L]
+      +- Filter atleastnnonnulls(1, tailnum#15)
+         +- Deduplicate [tailnum#15]
+            +- Project [tailnum#15]
+               +- Project [id#14, tailnum#15, airline_fk#16, MYSQL AS source_system#261]
+                  +- Relation [id#14,tailnum#15,airline_fk#16] JDBCRelation(aircraft) [numPartitions=1]
+
+2025-05-19 22:56:11,490 [INFO] Closing down clientserver connection
+2025-05-19 23:01:52,851 [INFO] ======= STARTING EXTRACT PHASE =======
+2025-05-19 23:01:52,852 [INFO] Extracting data from MySQL database (80% of data)
+2025-05-19 23:01:56,611 [INFO] Extracting data from CSV file (20% of data)
+2025-05-19 23:01:59,330 [INFO] ======= STARTING TRANSFORM PHASE =======
+2025-05-19 23:01:59,330 [INFO] Transforming MySQL data (80%)
+2025-05-19 23:02:03,625 [ERROR] ETL process failed: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column or function parameter with name `tailnum` cannot be resolved. Did you mean one of the following? [`id`, `year`, `month`, `day`, `day_of_week`, `dep_time`, `arr_time`, `sched_dep_time`, `sched_arr_time`, `hour`, `minute`, `air_time`, `flight_num`, `dep_delay_fk`, `arr_delay_fk`, `route_fk`, `aircraft_fk`, `source_system`].
+Traceback (most recent call last):
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\main.py", line 62, in main
+    transformed_mysql = run_transformations(mysql_data)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\transform\pipeline.py", line 50, in run_transformations
+    fact_flight_df = transform_fact_flight(
+                     ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\transform\facts\fact_flight.py", line 33, in transform_fact_flight
+    flight_df["tailnum"] == dim_aircraft_df["tailnum"],
+    ~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\pyspark\sql\dataframe.py", line 3080, in __getitem__
+    jc = self._jdf.apply(item)
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\py4j\java_gateway.py", line 1322, in __call__
+    return_value = get_return_value(
+                   ^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\pyspark\errors\exceptions\captured.py", line 185, in deco
+    raise converted from None
+pyspark.errors.exceptions.captured.AnalysisException: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column or function parameter with name `tailnum` cannot be resolved. Did you mean one of the following? [`id`, `year`, `month`, `day`, `day_of_week`, `dep_time`, `arr_time`, `sched_dep_time`, `sched_arr_time`, `hour`, `minute`, `air_time`, `flight_num`, `dep_delay_fk`, `arr_delay_fk`, `route_fk`, `aircraft_fk`, `source_system`].
+2025-05-19 23:02:03,949 [INFO] Closing down clientserver connection
+2025-05-19 23:03:40,106 [INFO] ======= STARTING EXTRACT PHASE =======
+2025-05-19 23:03:40,107 [INFO] Extracting data from MySQL database (80% of data)
+2025-05-19 23:03:43,605 [INFO] Extracting data from CSV file (20% of data)
+2025-05-19 23:03:45,824 [INFO] ======= STARTING TRANSFORM PHASE =======
+2025-05-19 23:03:45,824 [INFO] Transforming MySQL data (80%)
+2025-05-19 23:03:54,111 [INFO] Processing combined data (MySQL 80% + CSV 20%)
+2025-05-19 23:03:54,192 [INFO] Transforming combined data
+2025-05-19 23:04:02,014 [INFO] ======= STARTING LOAD PHASE =======
+2025-05-19 23:04:02,173 [INFO] Loading table 'dim_airline' with 16 records
+2025-05-19 23:04:02,799 [INFO] Loading table 'dim_aircraft' with 3994 records
+2025-05-19 23:04:03,835 [INFO] Loading table 'dim_route' with 223 records
+2025-05-19 23:04:04,381 [INFO] Loading table 'dim_dep_delay' with 2647 records
+2025-05-19 23:04:05,206 [INFO] Loading table 'dim_arr_delay' with 2690 records
+2025-05-19 23:04:06,321 [INFO] Loading table 'dim_date' with 365 records
+2025-05-19 23:04:08,236 [INFO] Loading table 'dim_time' with 320438 records
+2025-05-19 23:04:15,068 [ERROR] ETL process failed: An error occurred while calling o680.jdbc.
+: org.apache.spark.SparkException: Job aborted due to stage failure: Task 1 in stage 261.0 failed 1 times, most recent failure: Lost task 1.0 in stage 261.0 (TID 266) (DESKTOP-AJ23DVH.mshome.net executor driver): java.sql.BatchUpdateException: Data truncation: Data too long for column 'sched_dep_time' at row 1
+	at com.mysql.cj.jdbc.exceptions.SQLError.createBatchUpdateException(SQLError.java:214)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchSerially(ClientPreparedStatement.java:885)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchInternal(ClientPreparedStatement.java:466)
+	at com.mysql.cj.jdbc.StatementImpl.executeBatch(StatementImpl.java:858)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.savePartition(JdbcUtils.scala:748)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.$anonfun$saveTable$1(JdbcUtils.scala:904)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.$anonfun$saveTable$1$adapted(JdbcUtils.scala:903)
+	at org.apache.spark.rdd.RDD.$anonfun$foreachPartition$2(RDD.scala:1039)
+	at org.apache.spark.rdd.RDD.$anonfun$foreachPartition$2$adapted(RDD.scala:1039)
+	at org.apache.spark.SparkContext.$anonfun$runJob$5(SparkContext.scala:2433)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:93)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:166)
+	at org.apache.spark.scheduler.Task.run(Task.scala:141)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$4(Executor.scala:620)
+	at org.apache.spark.util.SparkErrorUtils.tryWithSafeFinally(SparkErrorUtils.scala:64)
+	at org.apache.spark.util.SparkErrorUtils.tryWithSafeFinally$(SparkErrorUtils.scala:61)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:94)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:623)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Data too long for column 'sched_dep_time' at row 1
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:96)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:990)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1168)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchSerially(ClientPreparedStatement.java:864)
+	... 19 more
+
+Driver stacktrace:
+	at org.apache.spark.scheduler.DAGScheduler.failJobAndIndependentStages(DAGScheduler.scala:2856)
+	at org.apache.spark.scheduler.DAGScheduler.$anonfun$abortStage$2(DAGScheduler.scala:2792)
+	at org.apache.spark.scheduler.DAGScheduler.$anonfun$abortStage$2$adapted(DAGScheduler.scala:2791)
+	at scala.collection.mutable.ResizableArray.foreach(ResizableArray.scala:62)
+	at scala.collection.mutable.ResizableArray.foreach$(ResizableArray.scala:55)
+	at scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:49)
+	at org.apache.spark.scheduler.DAGScheduler.abortStage(DAGScheduler.scala:2791)
+	at org.apache.spark.scheduler.DAGScheduler.$anonfun$handleTaskSetFailed$1(DAGScheduler.scala:1247)
+	at org.apache.spark.scheduler.DAGScheduler.$anonfun$handleTaskSetFailed$1$adapted(DAGScheduler.scala:1247)
+	at scala.Option.foreach(Option.scala:407)
+	at org.apache.spark.scheduler.DAGScheduler.handleTaskSetFailed(DAGScheduler.scala:1247)
+	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:3060)
+	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2994)
+	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2983)
+	at org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:49)
+	at org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:989)
+	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2393)
+	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2414)
+	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2433)
+	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2458)
+	at org.apache.spark.rdd.RDD.$anonfun$foreachPartition$1(RDD.scala:1039)
+	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
+	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
+	at org.apache.spark.rdd.RDD.withScope(RDD.scala:410)
+	at org.apache.spark.rdd.RDD.foreachPartition(RDD.scala:1037)
+	at org.apache.spark.sql.Dataset.$anonfun$foreachPartition$1(Dataset.scala:3516)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at org.apache.spark.sql.Dataset.$anonfun$withNewRDDExecutionId$1(Dataset.scala:4310)
+	at org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$6(SQLExecution.scala:125)
+	at org.apache.spark.sql.execution.SQLExecution$.withSQLConfPropagated(SQLExecution.scala:201)
+	at org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$1(SQLExecution.scala:108)
+	at org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:900)
+	at org.apache.spark.sql.execution.SQLExecution$.withNewExecutionId(SQLExecution.scala:66)
+	at org.apache.spark.sql.Dataset.withNewRDDExecutionId(Dataset.scala:4308)
+	at org.apache.spark.sql.Dataset.foreachPartition(Dataset.scala:3516)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.saveTable(JdbcUtils.scala:903)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcRelationProvider.createRelation(JdbcRelationProvider.scala:70)
+	at org.apache.spark.sql.execution.datasources.SaveIntoDataSourceCommand.run(SaveIntoDataSourceCommand.scala:48)
+	at org.apache.spark.sql.execution.command.ExecutedCommandExec.sideEffectResult$lzycompute(commands.scala:75)
+	at org.apache.spark.sql.execution.command.ExecutedCommandExec.sideEffectResult(commands.scala:73)
+	at org.apache.spark.sql.execution.command.ExecutedCommandExec.executeCollect(commands.scala:84)
+	at org.apache.spark.sql.execution.QueryExecution$$anonfun$eagerlyExecuteCommands$1.$anonfun$applyOrElse$1(QueryExecution.scala:107)
+	at org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$6(SQLExecution.scala:125)
+	at org.apache.spark.sql.execution.SQLExecution$.withSQLConfPropagated(SQLExecution.scala:201)
+	at org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$1(SQLExecution.scala:108)
+	at org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:900)
+	at org.apache.spark.sql.execution.SQLExecution$.withNewExecutionId(SQLExecution.scala:66)
+	at org.apache.spark.sql.execution.QueryExecution$$anonfun$eagerlyExecuteCommands$1.applyOrElse(QueryExecution.scala:107)
+	at org.apache.spark.sql.execution.QueryExecution$$anonfun$eagerlyExecuteCommands$1.applyOrElse(QueryExecution.scala:98)
+	at org.apache.spark.sql.catalyst.trees.TreeNode.$anonfun$transformDownWithPruning$1(TreeNode.scala:461)
+	at org.apache.spark.sql.catalyst.trees.CurrentOrigin$.withOrigin(origin.scala:76)
+	at org.apache.spark.sql.catalyst.trees.TreeNode.transformDownWithPruning(TreeNode.scala:461)
+	at org.apache.spark.sql.catalyst.plans.logical.LogicalPlan.org$apache$spark$sql$catalyst$plans$logical$AnalysisHelper$$super$transformDownWithPruning(LogicalPlan.scala:32)
+	at org.apache.spark.sql.catalyst.plans.logical.AnalysisHelper.transformDownWithPruning(AnalysisHelper.scala:267)
+	at org.apache.spark.sql.catalyst.plans.logical.AnalysisHelper.transformDownWithPruning$(AnalysisHelper.scala:263)
+	at org.apache.spark.sql.catalyst.plans.logical.LogicalPlan.transformDownWithPruning(LogicalPlan.scala:32)
+	at org.apache.spark.sql.catalyst.plans.logical.LogicalPlan.transformDownWithPruning(LogicalPlan.scala:32)
+	at org.apache.spark.sql.catalyst.trees.TreeNode.transformDown(TreeNode.scala:437)
+	at org.apache.spark.sql.execution.QueryExecution.eagerlyExecuteCommands(QueryExecution.scala:98)
+	at org.apache.spark.sql.execution.QueryExecution.commandExecuted$lzycompute(QueryExecution.scala:85)
+	at org.apache.spark.sql.execution.QueryExecution.commandExecuted(QueryExecution.scala:83)
+	at org.apache.spark.sql.execution.QueryExecution.assertCommandExecuted(QueryExecution.scala:142)
+	at org.apache.spark.sql.DataFrameWriter.runCommand(DataFrameWriter.scala:869)
+	at org.apache.spark.sql.DataFrameWriter.saveToV1Source(DataFrameWriter.scala:391)
+	at org.apache.spark.sql.DataFrameWriter.saveInternal(DataFrameWriter.scala:364)
+	at org.apache.spark.sql.DataFrameWriter.save(DataFrameWriter.scala:251)
+	at org.apache.spark.sql.DataFrameWriter.jdbc(DataFrameWriter.scala:766)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:75)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:52)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:244)
+	at py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:374)
+	at py4j.Gateway.invoke(Gateway.java:282)
+	at py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:132)
+	at py4j.commands.CallCommand.execute(CallCommand.java:79)
+	at py4j.ClientServerConnection.waitForCommands(ClientServerConnection.java:182)
+	at py4j.ClientServerConnection.run(ClientServerConnection.java:106)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.sql.BatchUpdateException: Data truncation: Data too long for column 'sched_dep_time' at row 1
+	at com.mysql.cj.jdbc.exceptions.SQLError.createBatchUpdateException(SQLError.java:214)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchSerially(ClientPreparedStatement.java:885)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchInternal(ClientPreparedStatement.java:466)
+	at com.mysql.cj.jdbc.StatementImpl.executeBatch(StatementImpl.java:858)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.savePartition(JdbcUtils.scala:748)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.$anonfun$saveTable$1(JdbcUtils.scala:904)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.$anonfun$saveTable$1$adapted(JdbcUtils.scala:903)
+	at org.apache.spark.rdd.RDD.$anonfun$foreachPartition$2(RDD.scala:1039)
+	at org.apache.spark.rdd.RDD.$anonfun$foreachPartition$2$adapted(RDD.scala:1039)
+	at org.apache.spark.SparkContext.$anonfun$runJob$5(SparkContext.scala:2433)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:93)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:166)
+	at org.apache.spark.scheduler.Task.run(Task.scala:141)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$4(Executor.scala:620)
+	at org.apache.spark.util.SparkErrorUtils.tryWithSafeFinally(SparkErrorUtils.scala:64)
+	at org.apache.spark.util.SparkErrorUtils.tryWithSafeFinally$(SparkErrorUtils.scala:61)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:94)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:623)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	... 1 more
+Caused by: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Data too long for column 'sched_dep_time' at row 1
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:96)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:990)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1168)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchSerially(ClientPreparedStatement.java:864)
+	... 19 more
+Traceback (most recent call last):
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\main.py", line 103, in main
+    write_spark_df_to_mysql(df, table_name)
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\load\run_loading.py", line 24, in write_spark_df_to_mysql
+    spark_df.write.jdbc(
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\pyspark\sql\readwriter.py", line 1984, in jdbc
+    self.mode(mode)._jwrite.jdbc(url, table, jprop)
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\py4j\java_gateway.py", line 1322, in __call__
+    return_value = get_return_value(
+                   ^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\pyspark\errors\exceptions\captured.py", line 179, in deco
+    return f(*a, **kw)
+           ^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\py4j\protocol.py", line 326, in get_return_value
+    raise Py4JJavaError(
+py4j.protocol.Py4JJavaError: An error occurred while calling o680.jdbc.
+: org.apache.spark.SparkException: Job aborted due to stage failure: Task 1 in stage 261.0 failed 1 times, most recent failure: Lost task 1.0 in stage 261.0 (TID 266) (DESKTOP-AJ23DVH.mshome.net executor driver): java.sql.BatchUpdateException: Data truncation: Data too long for column 'sched_dep_time' at row 1
+	at com.mysql.cj.jdbc.exceptions.SQLError.createBatchUpdateException(SQLError.java:214)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchSerially(ClientPreparedStatement.java:885)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchInternal(ClientPreparedStatement.java:466)
+	at com.mysql.cj.jdbc.StatementImpl.executeBatch(StatementImpl.java:858)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.savePartition(JdbcUtils.scala:748)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.$anonfun$saveTable$1(JdbcUtils.scala:904)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.$anonfun$saveTable$1$adapted(JdbcUtils.scala:903)
+	at org.apache.spark.rdd.RDD.$anonfun$foreachPartition$2(RDD.scala:1039)
+	at org.apache.spark.rdd.RDD.$anonfun$foreachPartition$2$adapted(RDD.scala:1039)
+	at org.apache.spark.SparkContext.$anonfun$runJob$5(SparkContext.scala:2433)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:93)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:166)
+	at org.apache.spark.scheduler.Task.run(Task.scala:141)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$4(Executor.scala:620)
+	at org.apache.spark.util.SparkErrorUtils.tryWithSafeFinally(SparkErrorUtils.scala:64)
+	at org.apache.spark.util.SparkErrorUtils.tryWithSafeFinally$(SparkErrorUtils.scala:61)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:94)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:623)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Data too long for column 'sched_dep_time' at row 1
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:96)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:990)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1168)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchSerially(ClientPreparedStatement.java:864)
+	... 19 more
+
+Driver stacktrace:
+	at org.apache.spark.scheduler.DAGScheduler.failJobAndIndependentStages(DAGScheduler.scala:2856)
+	at org.apache.spark.scheduler.DAGScheduler.$anonfun$abortStage$2(DAGScheduler.scala:2792)
+	at org.apache.spark.scheduler.DAGScheduler.$anonfun$abortStage$2$adapted(DAGScheduler.scala:2791)
+	at scala.collection.mutable.ResizableArray.foreach(ResizableArray.scala:62)
+	at scala.collection.mutable.ResizableArray.foreach$(ResizableArray.scala:55)
+	at scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:49)
+	at org.apache.spark.scheduler.DAGScheduler.abortStage(DAGScheduler.scala:2791)
+	at org.apache.spark.scheduler.DAGScheduler.$anonfun$handleTaskSetFailed$1(DAGScheduler.scala:1247)
+	at org.apache.spark.scheduler.DAGScheduler.$anonfun$handleTaskSetFailed$1$adapted(DAGScheduler.scala:1247)
+	at scala.Option.foreach(Option.scala:407)
+	at org.apache.spark.scheduler.DAGScheduler.handleTaskSetFailed(DAGScheduler.scala:1247)
+	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:3060)
+	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2994)
+	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2983)
+	at org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:49)
+	at org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:989)
+	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2393)
+	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2414)
+	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2433)
+	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2458)
+	at org.apache.spark.rdd.RDD.$anonfun$foreachPartition$1(RDD.scala:1039)
+	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
+	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
+	at org.apache.spark.rdd.RDD.withScope(RDD.scala:410)
+	at org.apache.spark.rdd.RDD.foreachPartition(RDD.scala:1037)
+	at org.apache.spark.sql.Dataset.$anonfun$foreachPartition$1(Dataset.scala:3516)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at org.apache.spark.sql.Dataset.$anonfun$withNewRDDExecutionId$1(Dataset.scala:4310)
+	at org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$6(SQLExecution.scala:125)
+	at org.apache.spark.sql.execution.SQLExecution$.withSQLConfPropagated(SQLExecution.scala:201)
+	at org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$1(SQLExecution.scala:108)
+	at org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:900)
+	at org.apache.spark.sql.execution.SQLExecution$.withNewExecutionId(SQLExecution.scala:66)
+	at org.apache.spark.sql.Dataset.withNewRDDExecutionId(Dataset.scala:4308)
+	at org.apache.spark.sql.Dataset.foreachPartition(Dataset.scala:3516)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.saveTable(JdbcUtils.scala:903)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcRelationProvider.createRelation(JdbcRelationProvider.scala:70)
+	at org.apache.spark.sql.execution.datasources.SaveIntoDataSourceCommand.run(SaveIntoDataSourceCommand.scala:48)
+	at org.apache.spark.sql.execution.command.ExecutedCommandExec.sideEffectResult$lzycompute(commands.scala:75)
+	at org.apache.spark.sql.execution.command.ExecutedCommandExec.sideEffectResult(commands.scala:73)
+	at org.apache.spark.sql.execution.command.ExecutedCommandExec.executeCollect(commands.scala:84)
+	at org.apache.spark.sql.execution.QueryExecution$$anonfun$eagerlyExecuteCommands$1.$anonfun$applyOrElse$1(QueryExecution.scala:107)
+	at org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$6(SQLExecution.scala:125)
+	at org.apache.spark.sql.execution.SQLExecution$.withSQLConfPropagated(SQLExecution.scala:201)
+	at org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$1(SQLExecution.scala:108)
+	at org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:900)
+	at org.apache.spark.sql.execution.SQLExecution$.withNewExecutionId(SQLExecution.scala:66)
+	at org.apache.spark.sql.execution.QueryExecution$$anonfun$eagerlyExecuteCommands$1.applyOrElse(QueryExecution.scala:107)
+	at org.apache.spark.sql.execution.QueryExecution$$anonfun$eagerlyExecuteCommands$1.applyOrElse(QueryExecution.scala:98)
+	at org.apache.spark.sql.catalyst.trees.TreeNode.$anonfun$transformDownWithPruning$1(TreeNode.scala:461)
+	at org.apache.spark.sql.catalyst.trees.CurrentOrigin$.withOrigin(origin.scala:76)
+	at org.apache.spark.sql.catalyst.trees.TreeNode.transformDownWithPruning(TreeNode.scala:461)
+	at org.apache.spark.sql.catalyst.plans.logical.LogicalPlan.org$apache$spark$sql$catalyst$plans$logical$AnalysisHelper$$super$transformDownWithPruning(LogicalPlan.scala:32)
+	at org.apache.spark.sql.catalyst.plans.logical.AnalysisHelper.transformDownWithPruning(AnalysisHelper.scala:267)
+	at org.apache.spark.sql.catalyst.plans.logical.AnalysisHelper.transformDownWithPruning$(AnalysisHelper.scala:263)
+	at org.apache.spark.sql.catalyst.plans.logical.LogicalPlan.transformDownWithPruning(LogicalPlan.scala:32)
+	at org.apache.spark.sql.catalyst.plans.logical.LogicalPlan.transformDownWithPruning(LogicalPlan.scala:32)
+	at org.apache.spark.sql.catalyst.trees.TreeNode.transformDown(TreeNode.scala:437)
+	at org.apache.spark.sql.execution.QueryExecution.eagerlyExecuteCommands(QueryExecution.scala:98)
+	at org.apache.spark.sql.execution.QueryExecution.commandExecuted$lzycompute(QueryExecution.scala:85)
+	at org.apache.spark.sql.execution.QueryExecution.commandExecuted(QueryExecution.scala:83)
+	at org.apache.spark.sql.execution.QueryExecution.assertCommandExecuted(QueryExecution.scala:142)
+	at org.apache.spark.sql.DataFrameWriter.runCommand(DataFrameWriter.scala:869)
+	at org.apache.spark.sql.DataFrameWriter.saveToV1Source(DataFrameWriter.scala:391)
+	at org.apache.spark.sql.DataFrameWriter.saveInternal(DataFrameWriter.scala:364)
+	at org.apache.spark.sql.DataFrameWriter.save(DataFrameWriter.scala:251)
+	at org.apache.spark.sql.DataFrameWriter.jdbc(DataFrameWriter.scala:766)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:75)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:52)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:244)
+	at py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:374)
+	at py4j.Gateway.invoke(Gateway.java:282)
+	at py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:132)
+	at py4j.commands.CallCommand.execute(CallCommand.java:79)
+	at py4j.ClientServerConnection.waitForCommands(ClientServerConnection.java:182)
+	at py4j.ClientServerConnection.run(ClientServerConnection.java:106)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.sql.BatchUpdateException: Data truncation: Data too long for column 'sched_dep_time' at row 1
+	at com.mysql.cj.jdbc.exceptions.SQLError.createBatchUpdateException(SQLError.java:214)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchSerially(ClientPreparedStatement.java:885)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchInternal(ClientPreparedStatement.java:466)
+	at com.mysql.cj.jdbc.StatementImpl.executeBatch(StatementImpl.java:858)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.savePartition(JdbcUtils.scala:748)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.$anonfun$saveTable$1(JdbcUtils.scala:904)
+	at org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils$.$anonfun$saveTable$1$adapted(JdbcUtils.scala:903)
+	at org.apache.spark.rdd.RDD.$anonfun$foreachPartition$2(RDD.scala:1039)
+	at org.apache.spark.rdd.RDD.$anonfun$foreachPartition$2$adapted(RDD.scala:1039)
+	at org.apache.spark.SparkContext.$anonfun$runJob$5(SparkContext.scala:2433)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:93)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:166)
+	at org.apache.spark.scheduler.Task.run(Task.scala:141)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$4(Executor.scala:620)
+	at org.apache.spark.util.SparkErrorUtils.tryWithSafeFinally(SparkErrorUtils.scala:64)
+	at org.apache.spark.util.SparkErrorUtils.tryWithSafeFinally$(SparkErrorUtils.scala:61)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:94)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:623)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	... 1 more
+Caused by: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Data too long for column 'sched_dep_time' at row 1
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:96)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:990)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1168)
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeBatchSerially(ClientPreparedStatement.java:864)
+	... 19 more
+
+2025-05-19 23:04:15,546 [INFO] Closing down clientserver connection
+2025-05-19 23:06:43,123 [INFO] ======= STARTING EXTRACT PHASE =======
+2025-05-19 23:06:43,124 [INFO] Extracting data from MySQL database (80% of data)
+2025-05-19 23:06:46,327 [INFO] Extracting data from CSV file (20% of data)
+2025-05-19 23:06:48,510 [INFO] ======= STARTING TRANSFORM PHASE =======
+2025-05-19 23:06:48,510 [INFO] Transforming MySQL data (80%)
+2025-05-19 23:06:56,673 [INFO] Processing combined data (MySQL 80% + CSV 20%)
+2025-05-19 23:06:56,713 [INFO] Transforming combined data
+2025-05-19 23:07:04,841 [INFO] ======= STARTING LOAD PHASE =======
+2025-05-19 23:07:04,969 [INFO] Loading table 'dim_airline' with 16 records
+2025-05-19 23:07:05,964 [INFO] Loading table 'dim_aircraft' with 3994 records
+2025-05-19 23:07:06,970 [INFO] Loading table 'dim_route' with 223 records
+2025-05-19 23:07:07,535 [INFO] Loading table 'dim_dep_delay' with 2647 records
+2025-05-19 23:07:08,356 [INFO] Loading table 'dim_arr_delay' with 2690 records
+2025-05-19 23:07:09,456 [INFO] Loading table 'dim_date' with 365 records
+2025-05-19 23:07:11,436 [INFO] Loading table 'dim_time' with 320438 records
+2025-05-19 23:07:21,938 [INFO] Loading table 'fact_flight' with 327346 records
+2025-05-19 23:07:32,286 [INFO] ETL process completed successfully
+2025-05-19 23:07:32,842 [INFO] Closing down clientserver connection
+2025-05-20 00:43:16,837 [INFO] ======= STARTING EXTRACT PHASE =======
+2025-05-20 00:43:16,837 [INFO] Extracting data from MySQL database (80% of data)
+2025-05-20 00:43:20,209 [INFO] Extracting data from CSV file (20% of data)
+2025-05-20 00:43:22,430 [INFO] ======= STARTING TRANSFORM PHASE =======
+2025-05-20 00:43:22,430 [INFO] Transforming MySQL data (80%)
+2025-05-20 00:43:26,499 [ERROR] ETL process failed: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column or function parameter with name `id` cannot be resolved. Did you mean one of the following? [`tailnum`, `aircraft_tk`].; line 17 pos 20;
+'Project [f.*, 'a.tailnum, 'air.carrier, 'air.airline_name, 'r.origin, 'r.destination, 'r.distance, 'dd.reason_dep_delay, 'dd.dep_delay_time, 'ad.reason_arr_delay, 'ad.arr_delay_time]
++- 'Join LeftOuter, ('f.arr_delay_fk = 'ad.id)
+   :- 'Join LeftOuter, ('f.dep_delay_fk = 'dd.id)
+   :  :- 'Join LeftOuter, ('f.route_fk = 'r.id)
+   :  :  :- 'Join LeftOuter, (1 = 1)
+   :  :  :  :- 'Join LeftOuter, ('f.aircraft_fk = 'a.id)
+   :  :  :  :  :- SubqueryAlias f
+   :  :  :  :  :  +- SubqueryAlias flight
+   :  :  :  :  :     +- View (`flight`, [id#91,year#92,month#93,day#94,day_of_week#95,dep_time#96,arr_time#97,sched_dep_time#98,sched_arr_time#99,hour#100,minute#101,air_time#102,flight_num#103,dep_delay_fk#104,arr_delay_fk#105,route_fk#106,aircraft_fk#107,source_system#288])
+   :  :  :  :  :        +- Project [id#91, year#92, month#93, day#94, day_of_week#95, dep_time#96, arr_time#97, sched_dep_time#98, sched_arr_time#99, hour#100, minute#101, air_time#102, flight_num#103, dep_delay_fk#104, arr_delay_fk#105, route_fk#106, aircraft_fk#107, MYSQL AS source_system#288]
+   :  :  :  :  :           +- Relation [id#91,year#92,month#93,day#94,day_of_week#95,dep_time#96,arr_time#97,sched_dep_time#98,sched_arr_time#99,hour#100,minute#101,air_time#102,flight_num#103,dep_delay_fk#104,arr_delay_fk#105,route_fk#106,aircraft_fk#107] JDBCRelation(flight) [numPartitions=1]
+   :  :  :  :  +- 'SubqueryAlias a
+   :  :  :  :     +- 'Project ['id, tailnum#15]
+   :  :  :  :        +- SubqueryAlias dim_aircraft
+   :  :  :  :           +- View (`dim_aircraft`, [aircraft_tk#360L,tailnum#15])
+   :  :  :  :              +- Project [aircraft_tk#360L, tailnum#15]
+   :  :  :  :                 +- Project [tailnum#15, (monotonically_increasing_id() + cast(1 as bigint)) AS aircraft_tk#360L]
+   :  :  :  :                    +- Filter atleastnnonnulls(1, tailnum#15)
+   :  :  :  :                       +- Deduplicate [tailnum#15]
+   :  :  :  :                          +- Project [tailnum#15]
+   :  :  :  :                             +- Project [id#14, tailnum#15, airline_fk#16, MYSQL AS source_system#261]
+   :  :  :  :                                +- Relation [id#14,tailnum#15,airline_fk#16] JDBCRelation(aircraft) [numPartitions=1]
+   :  :  :  +- 'SubqueryAlias air
+   :  :  :     +- 'Project ['id, carrier#1, airline_name#2]
+   :  :  :        +- SubqueryAlias dim_airline
+   :  :  :           +- View (`dim_airline`, [airline_tk#341L,carrier#1,airline_name#2])
+   :  :  :              +- Project [airline_tk#341L, carrier#1, airline_name#2]
+   :  :  :                 +- Project [carrier#1, airline_name#2, (monotonically_increasing_id() + cast(1 as bigint)) AS airline_tk#341L]
+   :  :  :                    +- Deduplicate [carrier#1]
+   :  :  :                       +- Project [carrier#1, airline_name#2]
+   :  :  :                          +- Project [id#0, carrier#1, airline_name#2, MYSQL AS source_system#256]
+   :  :  :                             +- Relation [id#0,carrier#1,airline_name#2] JDBCRelation(airline) [numPartitions=1]
+   :  :  +- 'SubqueryAlias r
+   :  :     +- 'Project ['id, origin#29, destination#30, distance#37]
+   :  :        +- SubqueryAlias dim_route
+   :  :           +- View (`dim_route`, [route_tk#381L,origin#29,destination#30,departure_city#31,departure_country#32,departure_airport_name#33,destination_city#34,destination_country#35,destination_airport_name#36,distance#37])
+   :  :              +- Project [route_tk#381L, origin#29, destination#30, departure_city#31, departure_country#32, departure_airport_name#33, destination_city#34, destination_country#35, destination_airport_name#36, distance#37]
+   :  :                 +- Project [origin#29, destination#30, departure_city#31, departure_country#32, departure_airport_name#33, destination_city#34, destination_country#35, destination_airport_name#36, distance#37, (monotonically_increasing_id() + cast(1 as bigint)) AS route_tk#381L]
+   :  :                    +- Deduplicate [origin#29, destination#30]
+   :  :                       +- Project [origin#29, destination#30, departure_city#31, departure_country#32, departure_airport_name#33, destination_city#34, destination_country#35, destination_airport_name#36, distance#37]
+   :  :                          +- Project [id#28, origin#29, destination#30, departure_city#31, departure_country#32, departure_airport_name#33, destination_city#34, destination_country#35, destination_airport_name#36, distance#37, MYSQL AS source_system#266]
+   :  :                             +- Relation [id#28,origin#29,destination#30,departure_city#31,departure_country#32,departure_airport_name#33,destination_city#34,destination_country#35,destination_airport_name#36,distance#37] JDBCRelation(route) [numPartitions=1]
+   :  +- 'SubqueryAlias dd
+   :     +- 'Project ['id, 'reason_dep_delay, 'dep_delay_time]
+   :        +- SubqueryAlias dim_dep_delay
+   :           +- View (`dim_dep_delay`, [dep_delay_tk#435L,reason#431,delay_time#432])
+   :              +- Project [dep_delay_tk#435L, reason#431, delay_time#432]
+   :                 +- Project [reason#431, delay_time#432, (monotonically_increasing_id() + cast(1 as bigint)) AS dep_delay_tk#435L]
+   :                    +- Deduplicate [reason#431, delay_time#432]
+   :                       +- Project [reason_dep_delay#64 AS reason#431, dep_delay_time#65 AS delay_time#432]
+   :                          +- Project [id#63, reason_dep_delay#64, dep_delay_time#65, MYSQL AS source_system#278]
+   :                             +- Relation [id#63,reason_dep_delay#64,dep_delay_time#65] JDBCRelation(dep_delay) [numPartitions=1]
+   +- 'SubqueryAlias ad
+      +- 'Project ['id, 'reason_arr_delay, 'arr_delay_time]
+         +- SubqueryAlias dim_arr_delay
+            +- View (`dim_arr_delay`, [arr_delay_tk#454L,reason#450,delay_time#451])
+               +- Project [arr_delay_tk#454L, reason#450, delay_time#451]
+                  +- Project [reason#450, delay_time#451, (monotonically_increasing_id() + cast(1 as bigint)) AS arr_delay_tk#454L]
+                     +- Deduplicate [reason#450, delay_time#451]
+                        +- Project [reason_arr_delay#78 AS reason#450, arr_delay_time#79 AS delay_time#451]
+                           +- Project [id#77, reason_arr_delay#78, arr_delay_time#79, MYSQL AS source_system#283]
+                              +- Relation [id#77,reason_arr_delay#78,arr_delay_time#79] JDBCRelation(arr_delay) [numPartitions=1]
+Traceback (most recent call last):
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\main.py", line 62, in main
+    transformed_mysql = run_transformations(mysql_data)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\transform\pipeline.py", line 50, in run_transformations
+    fact_flight_df = transform_fact_flight(
+                     ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\fax_\treca_godina\skladistenje_rudarenje\SRP_Projekt\checkpoint4\transform\facts\fact_flight.py", line 79, in transform_fact_flight
+    fact_base = spark.sql(fact_table_sql)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\pyspark\sql\session.py", line 1631, in sql
+    return DataFrame(self._jsparkSession.sql(sqlQuery, litArgs), self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\py4j\java_gateway.py", line 1322, in __call__
+    return_value = get_return_value(
+                   ^^^^^^^^^^^^^^^^^
+  File "C:\Users\gabri\AppData\Local\Programs\Python\Python311\Lib\site-packages\pyspark\errors\exceptions\captured.py", line 185, in deco
+    raise converted from None
+pyspark.errors.exceptions.captured.AnalysisException: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column or function parameter with name `id` cannot be resolved. Did you mean one of the following? [`tailnum`, `aircraft_tk`].; line 17 pos 20;
+'Project [f.*, 'a.tailnum, 'air.carrier, 'air.airline_name, 'r.origin, 'r.destination, 'r.distance, 'dd.reason_dep_delay, 'dd.dep_delay_time, 'ad.reason_arr_delay, 'ad.arr_delay_time]
++- 'Join LeftOuter, ('f.arr_delay_fk = 'ad.id)
+   :- 'Join LeftOuter, ('f.dep_delay_fk = 'dd.id)
+   :  :- 'Join LeftOuter, ('f.route_fk = 'r.id)
+   :  :  :- 'Join LeftOuter, (1 = 1)
+   :  :  :  :- 'Join LeftOuter, ('f.aircraft_fk = 'a.id)
+   :  :  :  :  :- SubqueryAlias f
+   :  :  :  :  :  +- SubqueryAlias flight
+   :  :  :  :  :     +- View (`flight`, [id#91,year#92,month#93,day#94,day_of_week#95,dep_time#96,arr_time#97,sched_dep_time#98,sched_arr_time#99,hour#100,minute#101,air_time#102,flight_num#103,dep_delay_fk#104,arr_delay_fk#105,route_fk#106,aircraft_fk#107,source_system#288])
+   :  :  :  :  :        +- Project [id#91, year#92, month#93, day#94, day_of_week#95, dep_time#96, arr_time#97, sched_dep_time#98, sched_arr_time#99, hour#100, minute#101, air_time#102, flight_num#103, dep_delay_fk#104, arr_delay_fk#105, route_fk#106, aircraft_fk#107, MYSQL AS source_system#288]
+   :  :  :  :  :           +- Relation [id#91,year#92,month#93,day#94,day_of_week#95,dep_time#96,arr_time#97,sched_dep_time#98,sched_arr_time#99,hour#100,minute#101,air_time#102,flight_num#103,dep_delay_fk#104,arr_delay_fk#105,route_fk#106,aircraft_fk#107] JDBCRelation(flight) [numPartitions=1]
+   :  :  :  :  +- 'SubqueryAlias a
+   :  :  :  :     +- 'Project ['id, tailnum#15]
+   :  :  :  :        +- SubqueryAlias dim_aircraft
+   :  :  :  :           +- View (`dim_aircraft`, [aircraft_tk#360L,tailnum#15])
+   :  :  :  :              +- Project [aircraft_tk#360L, tailnum#15]
+   :  :  :  :                 +- Project [tailnum#15, (monotonically_increasing_id() + cast(1 as bigint)) AS aircraft_tk#360L]
+   :  :  :  :                    +- Filter atleastnnonnulls(1, tailnum#15)
+   :  :  :  :                       +- Deduplicate [tailnum#15]
+   :  :  :  :                          +- Project [tailnum#15]
+   :  :  :  :                             +- Project [id#14, tailnum#15, airline_fk#16, MYSQL AS source_system#261]
+   :  :  :  :                                +- Relation [id#14,tailnum#15,airline_fk#16] JDBCRelation(aircraft) [numPartitions=1]
+   :  :  :  +- 'SubqueryAlias air
+   :  :  :     +- 'Project ['id, carrier#1, airline_name#2]
+   :  :  :        +- SubqueryAlias dim_airline
+   :  :  :           +- View (`dim_airline`, [airline_tk#341L,carrier#1,airline_name#2])
+   :  :  :              +- Project [airline_tk#341L, carrier#1, airline_name#2]
+   :  :  :                 +- Project [carrier#1, airline_name#2, (monotonically_increasing_id() + cast(1 as bigint)) AS airline_tk#341L]
+   :  :  :                    +- Deduplicate [carrier#1]
+   :  :  :                       +- Project [carrier#1, airline_name#2]
+   :  :  :                          +- Project [id#0, carrier#1, airline_name#2, MYSQL AS source_system#256]
+   :  :  :                             +- Relation [id#0,carrier#1,airline_name#2] JDBCRelation(airline) [numPartitions=1]
+   :  :  +- 'SubqueryAlias r
+   :  :     +- 'Project ['id, origin#29, destination#30, distance#37]
+   :  :        +- SubqueryAlias dim_route
+   :  :           +- View (`dim_route`, [route_tk#381L,origin#29,destination#30,departure_city#31,departure_country#32,departure_airport_name#33,destination_city#34,destination_country#35,destination_airport_name#36,distance#37])
+   :  :              +- Project [route_tk#381L, origin#29, destination#30, departure_city#31, departure_country#32, departure_airport_name#33, destination_city#34, destination_country#35, destination_airport_name#36, distance#37]
+   :  :                 +- Project [origin#29, destination#30, departure_city#31, departure_country#32, departure_airport_name#33, destination_city#34, destination_country#35, destination_airport_name#36, distance#37, (monotonically_increasing_id() + cast(1 as bigint)) AS route_tk#381L]
+   :  :                    +- Deduplicate [origin#29, destination#30]
+   :  :                       +- Project [origin#29, destination#30, departure_city#31, departure_country#32, departure_airport_name#33, destination_city#34, destination_country#35, destination_airport_name#36, distance#37]
+   :  :                          +- Project [id#28, origin#29, destination#30, departure_city#31, departure_country#32, departure_airport_name#33, destination_city#34, destination_country#35, destination_airport_name#36, distance#37, MYSQL AS source_system#266]
+   :  :                             +- Relation [id#28,origin#29,destination#30,departure_city#31,departure_country#32,departure_airport_name#33,destination_city#34,destination_country#35,destination_airport_name#36,distance#37] JDBCRelation(route) [numPartitions=1]
+   :  +- 'SubqueryAlias dd
+   :     +- 'Project ['id, 'reason_dep_delay, 'dep_delay_time]
+   :        +- SubqueryAlias dim_dep_delay
+   :           +- View (`dim_dep_delay`, [dep_delay_tk#435L,reason#431,delay_time#432])
+   :              +- Project [dep_delay_tk#435L, reason#431, delay_time#432]
+   :                 +- Project [reason#431, delay_time#432, (monotonically_increasing_id() + cast(1 as bigint)) AS dep_delay_tk#435L]
+   :                    +- Deduplicate [reason#431, delay_time#432]
+   :                       +- Project [reason_dep_delay#64 AS reason#431, dep_delay_time#65 AS delay_time#432]
+   :                          +- Project [id#63, reason_dep_delay#64, dep_delay_time#65, MYSQL AS source_system#278]
+   :                             +- Relation [id#63,reason_dep_delay#64,dep_delay_time#65] JDBCRelation(dep_delay) [numPartitions=1]
+   +- 'SubqueryAlias ad
+      +- 'Project ['id, 'reason_arr_delay, 'arr_delay_time]
+         +- SubqueryAlias dim_arr_delay
+            +- View (`dim_arr_delay`, [arr_delay_tk#454L,reason#450,delay_time#451])
+               +- Project [arr_delay_tk#454L, reason#450, delay_time#451]
+                  +- Project [reason#450, delay_time#451, (monotonically_increasing_id() + cast(1 as bigint)) AS arr_delay_tk#454L]
+                     +- Deduplicate [reason#450, delay_time#451]
+                        +- Project [reason_arr_delay#78 AS reason#450, arr_delay_time#79 AS delay_time#451]
+                           +- Project [id#77, reason_arr_delay#78, arr_delay_time#79, MYSQL AS source_system#283]
+                              +- Relation [id#77,reason_arr_delay#78,arr_delay_time#79] JDBCRelation(arr_delay) [numPartitions=1]
+
+2025-05-20 00:43:26,914 [INFO] Closing down clientserver connection
+2025-05-20 00:44:17,059 [INFO] ======= STARTING EXTRACT PHASE =======
+2025-05-20 00:44:17,060 [INFO] Extracting data from MySQL database (80% of data)
+2025-05-20 00:44:20,842 [INFO] Extracting data from CSV file (20% of data)
+2025-05-20 00:44:23,469 [INFO] ======= STARTING TRANSFORM PHASE =======
+2025-05-20 00:44:23,469 [INFO] Transforming MySQL data (80%)
+2025-05-20 00:44:32,402 [INFO] Processing combined data (MySQL 80% + CSV 20%)
+2025-05-20 00:44:32,445 [INFO] Transforming combined data
+2025-05-20 00:44:40,810 [INFO] ======= STARTING LOAD PHASE =======
+2025-05-20 00:44:40,941 [INFO] Loading table 'dim_airline' with 16 records
+2025-05-20 00:44:41,541 [INFO] Loading table 'dim_aircraft' with 3994 records
+2025-05-20 00:44:42,694 [INFO] Loading table 'dim_route' with 223 records
+2025-05-20 00:44:43,344 [INFO] Loading table 'dim_dep_delay' with 2647 records
+2025-05-20 00:44:44,403 [INFO] Loading table 'dim_arr_delay' with 2690 records
+2025-05-20 00:44:45,731 [INFO] Loading table 'dim_date' with 365 records
+2025-05-20 00:44:47,990 [INFO] Loading table 'dim_time' with 320438 records
+2025-05-20 00:44:56,766 [INFO] Loading table 'fact_flight' with 327346 records
+2025-05-20 00:45:08,441 [INFO] ETL process completed successfully
+2025-05-20 00:45:08,626 [INFO] Closing down clientserver connection
+2025-05-20 01:03:07,516 [INFO] ======= STARTING EXTRACT PHASE =======
+2025-05-20 01:03:07,517 [INFO] Extracting data from MySQL database (80% of data)
+2025-05-20 01:03:10,965 [INFO] Extracting data from CSV file (20% of data)
+2025-05-20 01:03:13,519 [INFO] ======= STARTING TRANSFORM PHASE =======
+2025-05-20 01:03:13,520 [INFO] Transforming MySQL data (80%)
+2025-05-20 01:03:21,849 [INFO] Processing combined data (MySQL 80% + CSV 20%)
+2025-05-20 01:03:21,889 [INFO] Transforming combined data
+2025-05-20 01:03:29,758 [INFO] ======= STARTING LOAD PHASE =======
+2025-05-20 01:03:29,946 [INFO] Loading table 'dim_airline' with 16 records
+2025-05-20 01:03:30,431 [INFO] Loading table 'dim_aircraft' with 3994 records
+2025-05-20 01:03:31,468 [INFO] Loading table 'dim_route' with 223 records
+2025-05-20 01:03:32,027 [INFO] Loading table 'dim_dep_delay' with 2647 records
+2025-05-20 01:03:32,848 [INFO] Loading table 'dim_arr_delay' with 2690 records
+2025-05-20 01:03:33,909 [INFO] Loading table 'dim_date' with 365 records
+2025-05-20 01:03:35,882 [INFO] Loading table 'dim_time' with 320438 records
+2025-05-20 01:03:43,443 [INFO] Loading table 'fact_flight' with 327346 records
+2025-05-20 01:03:54,417 [INFO] ETL process completed successfully
+2025-05-20 01:03:54,589 [INFO] Closing down clientserver connection
+2025-05-20 01:15:53,159 [INFO] ======= STARTING EXTRACT PHASE =======
+2025-05-20 01:15:53,159 [INFO] Extracting data from MySQL database (80% of data)
+2025-05-20 01:15:56,375 [INFO] Extracting data from CSV file (20% of data)
+2025-05-20 01:15:58,416 [INFO] ======= STARTING TRANSFORM PHASE =======
+2025-05-20 01:15:58,416 [INFO] Transforming MySQL data (80%)
+2025-05-20 01:16:06,352 [INFO] Processing combined data (MySQL 80% + CSV 20%)
+2025-05-20 01:16:06,393 [INFO] Transforming combined data
+2025-05-20 01:16:14,099 [INFO] ======= STARTING LOAD PHASE =======
+2025-05-20 01:16:14,223 [INFO] Loading table 'dim_airline' with 16 records
+2025-05-20 01:16:14,718 [INFO] Loading table 'dim_aircraft' with 3994 records
+2025-05-20 01:16:15,686 [INFO] Loading table 'dim_route' with 223 records
+2025-05-20 01:16:16,240 [INFO] Loading table 'dim_dep_delay' with 2647 records
+2025-05-20 01:16:17,071 [INFO] Loading table 'dim_arr_delay' with 2690 records
+2025-05-20 01:16:18,184 [INFO] Loading table 'dim_date' with 365 records
+2025-05-20 01:16:20,066 [INFO] Loading table 'dim_time' with 320438 records
+2025-05-20 01:16:28,130 [INFO] Loading table 'fact_flight' with 327346 records
+2025-05-20 01:16:39,066 [INFO] ETL process completed successfully
+2025-05-20 01:16:39,262 [INFO] Closing down clientserver connection

@@ -7,6 +7,11 @@ def get_spark_session(app_name="ETL_App"):
     """
     Create and return a Spark session with MySQL connector configured.
     """
+    # Set up Hadoop home for Windows to avoid warnings
+    hadoop_home = os.path.join(Path(__file__).parent.absolute(), "hadoop")
+    os.environ["HADOOP_HOME"] = str(hadoop_home)
+    os.environ["PATH"] = os.path.join(hadoop_home, "bin") + os.pathsep + os.environ["PATH"]
+    
     # Get the directory where the script is located
     current_dir = Path(__file__).parent.absolute()
     
@@ -38,10 +43,22 @@ def get_spark_session(app_name="ETL_App"):
             logging.error(error_msg)
             raise FileNotFoundError(error_msg)
     
-    # Build the Spark session with the connector properly configured
-    return SparkSession.builder \
+    # Build the Spark session with additional configurations to suppress warnings
+    spark = SparkSession.builder \
         .appName(app_name) \
         .config("spark.jars", connector_path) \
         .config("spark.driver.extraClassPath", connector_path) \
         .config("spark.executor.extraClassPath", connector_path) \
+        .config("spark.ui.showConsoleProgress", "false") \
+        .config("spark.hadoop.fs.permissions.umask-mode", "022") \
+        .config("spark.hadoop.dfs.permissions", "false") \
+        .config("spark.sql.adaptive.enabled", "true") \
+        .config("spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version", "2") \
+        .config("spark.sql.catalogImplementation", "in-memory") \
+        .config("spark.sql.warehouse.dir", os.path.join(current_dir, "spark-warehouse")) \
         .getOrCreate()
+    
+    # Set log level to ERROR to prevent warnings
+    spark.sparkContext.setLogLevel("ERROR")
+    
+    return spark
